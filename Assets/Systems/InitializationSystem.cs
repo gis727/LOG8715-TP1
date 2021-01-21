@@ -8,9 +8,23 @@ public class InitializationSystem : ISystem
     {
         if (ComponentManager.ContainsEntities()) return;
 
-        foreach(Config.ShapeConfig config in ECSManager.Instance.Config.allShapesToSpawn)
+        uint shapesCount = (uint) ECSManager.Instance.Config.allShapesToSpawn.Count;
+        uint index = 0;
+        uint maxStaticIndex = shapesCount / 4;
+
+        foreach (Config.ShapeConfig config in ECSManager.Instance.Config.allShapesToSpawn)
         {
-            ECSManager.Instance.CreateShape(ComponentManager.AddEntity(config.initialPos, config.initialSpeed), config);
+            EntityComponent entity = new EntityComponent();
+            entity.id = ComponentManager.AddEntity(config.initialPos, config.initialSpeed, config.size);
+            if (index < maxStaticIndex) ComponentManager.Tag("static", entity);
+            else
+            {
+                ComponentManager.Tag("dynamic", entity);
+                ComponentManager.Tag("withCollision", entity);
+            }
+
+            ECSManager.Instance.CreateShape(entity.id, config);
+            index++;
         }
     }
 
