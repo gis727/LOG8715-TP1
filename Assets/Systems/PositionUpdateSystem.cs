@@ -6,30 +6,25 @@ public class PositionUpdateSystem : ISystem
 {
     public void UpdateSystem()
     {
-        // Lists to save modified components
-        List<PositionComponent> newPos = new List<PositionComponent>();
-        List<uint> keys = new List<uint>();
+        // Update des composants dynamiques
+        ComponentManager.ForEachElementWithTag("dynamic", new List<string>{ "Velocity", "Position" }, (EntityComponent entity, List<IComponent> components) => {
+            VelocityComponent velComponent = (VelocityComponent)components[0];
+            PositionComponent posComponent = (PositionComponent)components[1];
 
-        foreach(uint entityKey in ComponentManager.components["Position"].Keys)
-        {
-            PositionComponent posComponent = (PositionComponent) ComponentManager.components["Position"][entityKey];
-            VelocityComponent velComponent = (VelocityComponent) ComponentManager.components["Velocity"][entityKey];
+            posComponent.position += velComponent.speed * Time.deltaTime * 1;
+            ECSManager.Instance.UpdateShapePosition(entity.id, posComponent.position);
 
-            posComponent.position += velComponent.speed * Time.deltaTime*1;
+            return new List<IComponent>{ velComponent, posComponent };
+        });
 
-            newPos.Add(posComponent);
-            keys.Add(entityKey);
+        // Update des composants statiques
+        ComponentManager.ForEachElementWithTag("static", new List<string> { "Position" }, (EntityComponent entity, List<IComponent> components) => {
+            PositionComponent posComponent = (PositionComponent)components[0];
 
-            ECSManager.Instance.UpdateShapePosition(entityKey, posComponent.position);
-        }
+            ECSManager.Instance.UpdateShapePosition(entity.id, posComponent.position);
 
-        // Updated all positions in component
-        int index = 0;
-        foreach(uint key in keys)
-        {
-            ComponentManager.components["Position"][key] = newPos[index];
-            index++;
-        }
+            return new List<IComponent> { posComponent };
+        });
     }
 
     public string Name
