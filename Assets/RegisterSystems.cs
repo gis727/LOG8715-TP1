@@ -9,7 +9,9 @@ public class RegisterSystems
 
         // AJOUTEZ VOS SYSTEMS ICI
         toRegister.Add(new InitializationSystem());
+        toRegister.Add(new CollisionSystem());
         toRegister.Add(new PositionUpdateSystem());
+        toRegister.Add(new TagSystem());
 
         return toRegister;
     }
