@@ -5,7 +5,7 @@ using UnityEngine;
 public static class ComponentManager
 {
     public static Dictionary<string, Dictionary<uint, IComponent>> components = new Dictionary<string, Dictionary<uint, IComponent>>();
-    public static Dictionary<string, List<EntityComponent>> tags = new Dictionary<string, List<EntityComponent>>();
+    public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
 
     public static bool ContainsEntities()
     {
@@ -34,7 +34,7 @@ public static class ComponentManager
 
     public static void Tag(string tag, EntityComponent entity)
     {
-        if (!tags.ContainsKey(tag)) tags.Add(tag, new List<EntityComponent>());
+        if (!tags.ContainsKey(tag)) tags.Add(tag, new HashSet<EntityComponent>());
         tags[tag].Add(entity);
     }
 
@@ -44,11 +44,17 @@ public static class ComponentManager
         tags[tag].Remove(entity);
     }
 
+    public static bool EntityIsTagged(string tag, EntityComponent entity)
+    {
+        if (!tags.ContainsKey(tag)) return false;
+        return tags[tag].Contains(entity);
+    }
+
     public static void ForEachElementWithTag(string tag, List<string> componentNames, System.Func<EntityComponent, List<IComponent>, List<IComponent>> lambda)
     {
         if (!tags.ContainsKey(tag)) return;
 
-        foreach(EntityComponent entity in tags[tag])
+        foreach(EntityComponent entity in new HashSet<EntityComponent>(tags[tag]))
         {
             // Get all required components
             List<IComponent> reqComponents = new List<IComponent>();
