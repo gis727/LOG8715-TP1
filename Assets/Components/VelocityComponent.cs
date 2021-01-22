@@ -4,5 +4,9 @@ using UnityEngine;
 
 public struct VelocityComponent : IComponent
 {
+    public VelocityComponent(Vector2 speed)
+    {
+        this.speed = speed;
+    }
     public Vector2 speed;
 }

@@ -20,13 +20,8 @@ public static class ComponentManager
 
         uint entityId = (uint) components["Position"].Count;
 
-        PositionComponent posComp;
-        VelocityComponent velComp;
-        posComp.position = pos;
-        velComp.speed = speed;
-
-        components["Position"][entityId] = posComp;
-        components["Velocity"][entityId] = velComp;
+        components["Position"][entityId] = new PositionComponent(pos);
+        components["Velocity"][entityId] = new VelocityComponent(speed);
         components["Size"][entityId] = new SizeComponent(size);
 
         return entityId;
