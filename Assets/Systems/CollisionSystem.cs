@@ -72,7 +72,7 @@ public class CollisionSystem : ISystem
 
     private void RestoreEntity(ref SizeComponent sizeComponent, EntityComponent entity)
     {
-        sizeComponent.size = 1; // Restore default size (TODO)
+        sizeComponent.size = sizeComponent.defaultSize;
         ComponentManager.Tag("withCollision", entity);
         ComponentManager.Untag("withoutCollision", entity);
     }
