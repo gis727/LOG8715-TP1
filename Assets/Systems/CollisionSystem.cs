@@ -23,25 +23,58 @@ public class CollisionSystem : ISystem
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
             VelocityComponent velComponent = (VelocityComponent)components[2];
-            
-            if (ScreenCollisionDetected(posComponent.position, sizeComponent.size))
-            {
-                //Debug.Log("OUT_____");
-                velComponent.speed *= -1;
-                sizeComponent.size = 1;
-                ECSManager.Instance.UpdateShapeSize(entity.id, sizeComponent.size);
-            }
-            else if (CollisionDetected(positions, posComponent.position, sizes, sizeComponent.size))
+
+            bool entityIsEscapingWall = ComponentManager.EntityIsTagged("escapingWall", entity);
+            bool collisionDetected = CollisionDetected(positions, posComponent.position, sizes, sizeComponent.size);
+
+            if (!entityIsEscapingWall && collisionDetected)
             {
                 velComponent.speed *= -1;
                 sizeComponent.size /= 2;
                 ECSManager.Instance.UpdateShapeSize(entity.id, sizeComponent.size);
+                ComponentManager.Untag("escapingWall", entity);
             }
-            
+
+            if (sizeComponent.size < ECSManager.Instance.Config.minSize)
+            {
+                ComponentManager.Untag("withCollision", entity);
+                ComponentManager.Tag("withoutCollision", entity);
+            }
+
             return new List<IComponent>{ posComponent, sizeComponent, velComponent };
         });
 
+        // Detection des collisions avec l'ecran
+        ComponentManager.ForEachElementWithTag("dynamic", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
+            PositionComponent posComponent = (PositionComponent)components[0];
+            SizeComponent sizeComponent = (SizeComponent)components[1];
+            VelocityComponent velComponent = (VelocityComponent)components[2];
+            bool entityIsEscapingWall = ComponentManager.EntityIsTagged("escapingWall", entity);
+            bool collisionDetected = ScreenCollisionDetected(posComponent.position, sizeComponent.size);
 
+            if (entityIsEscapingWall && !collisionDetected)
+            {
+                ComponentManager.Untag("escapingWall", entity);
+                RestoreEntity(ref sizeComponent, entity);
+            }
+            else if (!entityIsEscapingWall && collisionDetected)
+            {
+                ComponentManager.Tag("escapingWall", entity);
+                velComponent.speed *= -1;
+                RestoreEntity(ref sizeComponent, entity);
+            }
+            ECSManager.Instance.UpdateShapeSize(entity.id, sizeComponent.size);
+
+            return new List<IComponent> { posComponent, sizeComponent, velComponent };
+        });
+
+    }
+
+    private void RestoreEntity(ref SizeComponent sizeComponent, EntityComponent entity)
+    {
+        sizeComponent.size = 1; // Restore default size (TODO)
+        ComponentManager.Tag("withCollision", entity);
+        ComponentManager.Untag("withoutCollision", entity);
     }
 
     private bool CollisionDetected(List<Vector2> positions, Vector2 targetPosition, List<float> sizes, float targetSize)
@@ -59,18 +92,17 @@ public class CollisionSystem : ISystem
         return false;
     }
 
-    private bool ScreenCollisionDetected(Vector2 targetPosition, float targetSize)
+    private bool ScreenCollisionDetected(Vector2 pos, float targetSize)
     {
-        // TODO
-        Vector3 stageDimensions = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
-        Vector3 rstageDimensions = Camera.main.ScreenToWorldPoint(new Vector3(-Screen.width, -Screen.height, 0));
-        float maxX = stageDimensions.x;
-        float maxY = stageDimensions.y;
-        float minX = rstageDimensions.x;
-        float minY = rstageDimensions.y;
+        Vector2 upperScreenLimits = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
+        Vector2 lowerScreenLimits = Camera.main.ScreenToWorldPoint(Vector2.zero);
+        float targetHalfSize = targetSize / 2;
+        float maxX = upperScreenLimits.x - targetHalfSize;
+        float maxY = upperScreenLimits.y - targetHalfSize;
+        float minX = lowerScreenLimits.x + targetHalfSize;
+        float minY = lowerScreenLimits.y + targetHalfSize;
 
-        Vector2 pos = Camera.main.ScreenToWorldPoint(targetPosition);
-        return pos.x >= maxX || pos.y >= maxY;
+        return pos.x <= minX || pos.x >= maxX || pos.y <= minY || pos.y >= maxY;
     }
 
     public string Name
