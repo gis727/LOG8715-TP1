@@ -27,6 +27,26 @@ public static class ComponentManager
         return entityId;
     }
 
+    public static IComponent GetSingletonComponent<ComponentType>() where ComponentType : IComponent, new()
+    {
+        uint entityId = uint.MaxValue; // Entitee unique associee au singleton
+        string componentName = System.ComponentModel.TypeDescriptor.GetClassName(typeof(ComponentType));
+
+        if (!components.ContainsKey(componentName))
+        {
+            components.Add(componentName, new Dictionary<uint, IComponent>());
+            components[componentName][entityId] = new ComponentType();
+        }
+
+        return components[componentName][entityId];
+    }
+    public static void SetSingletonComponent<ComponentType>(IComponent component)
+    {
+        uint entityId = uint.MaxValue;
+        string componentName = System.ComponentModel.TypeDescriptor.GetClassName(typeof(ComponentType));
+        if (components.ContainsKey(componentName)) components[componentName][entityId] = component;
+    }
+
     public static void Tag(string tag, EntityComponent entity)
     {
         if (!tags.ContainsKey(tag)) tags.Add(tag, new HashSet<EntityComponent>());
