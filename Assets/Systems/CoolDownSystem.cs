@@ -6,11 +6,28 @@ public class CoolDownSystem : ISystem
 {
     public void UpdateSystem()
     {
-        const float coolDownLength = 2;
+        
         RestorationComponent component = (RestorationComponent)ComponentManager.GetSingletonComponent<RestorationComponent>();
 
         bool newCooldownDetected = component.coolDownStartTime == -1 && Input.GetKey(KeyCode.Space);
-        bool cooldownInProgress =  component.coolDownStartTime != -1;
+        bool cooldownInProgress = component.coolDownStartTime != -1;
+
+        UpdateCoolDown(component, newCooldownDetected, cooldownInProgress);
+        ShowCoolDownState(component, cooldownInProgress);
+    }
+
+    private void ShowCoolDownState(RestorationComponent component, bool cooldownInProgress)
+    {
+        if (Input.GetKey(KeyCode.Space) && cooldownInProgress)
+        {
+            float coolDownLapse = Time.time - component.coolDownStartTime;
+            Debug.Log("Cooldown In progress. " + coolDownLapse.ToString("F3") + " seconds left.");
+        }
+    }
+
+    private void UpdateCoolDown(RestorationComponent component, bool newCooldownDetected, bool cooldownInProgress)
+    {
+        const float coolDownLength = 2;
 
         if (newCooldownDetected)
         {
@@ -20,15 +37,7 @@ public class CoolDownSystem : ISystem
         else if (cooldownInProgress)
         {
             float coolDownLapse = Time.time - component.coolDownStartTime;
-            if (coolDownLapse >= coolDownLength && !component.restorationRequired)
-            {
-                component.coolDownStartTime = -1;
-                Debug.Log("END OF COOLDOWN");
-            }
-            else
-            {
-                Debug.Log("Cooldown In progress. " + coolDownLapse.ToString("F3") + " seconds left.");
-            }
+            if (coolDownLapse >= coolDownLength) component.coolDownStartTime = -1;
         }
 
         ComponentManager.SetSingletonComponent<RestorationComponent>(component);
