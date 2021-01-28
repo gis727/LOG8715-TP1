@@ -16,12 +16,10 @@ public class InitializationSystem : ISystem
         {
             EntityComponent entity = new EntityComponent();
             entity.id = ComponentManager.AddEntity(config.initialPos, config.initialSpeed, config.size);
-            if (index < maxStaticIndex) ComponentManager.Tag("static", entity);
-            else
-            {
-                ComponentManager.Tag("dynamic", entity);
-                ComponentManager.Tag("withCollision", entity);
-            }
+
+            string movementTag = (index < maxStaticIndex) ? "static" : "dynamic";
+            ComponentManager.Tag(movementTag, entity);
+            ComponentManager.Tag("withCollision", entity);
 
             ECSManager.Instance.CreateShape(entity.id, config);
             index++;

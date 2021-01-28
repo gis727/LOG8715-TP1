@@ -24,21 +24,26 @@ public class CollisionSystem : ISystem
             SizeComponent sizeComponent = (SizeComponent)components[1];
             VelocityComponent velComponent = (VelocityComponent)components[2];
 
-            bool entityIsEscapingWall = ComponentManager.EntityIsTagged("escapingWall", entity);
-            bool collisionDetected = CollisionDetected(positions, posComponent.position, sizes, sizeComponent.size);
+            bool entityIsStatic = ComponentManager.EntityIsTagged("static", entity);
 
-            if (!entityIsEscapingWall && collisionDetected)
+            if (!entityIsStatic) // Les entitees statiques ne reagissent pas aux collisions
             {
-                velComponent.speed *= -1;
-                sizeComponent.size /= 2;
-                ECSManager.Instance.UpdateShapeSize(entity.id, sizeComponent.size);
-                ComponentManager.Untag("escapingWall", entity);
-            }
+                bool entityIsEscapingWall = ComponentManager.EntityIsTagged("escapingWall", entity);
+                bool collisionDetected = CollisionDetected(positions, posComponent.position, sizes, sizeComponent.size);
 
-            if (sizeComponent.size < ECSManager.Instance.Config.minSize)
-            {
-                ComponentManager.Untag("withCollision", entity);
-                ComponentManager.Tag("withoutCollision", entity);
+                if (!entityIsEscapingWall && collisionDetected)
+                {
+                    velComponent.speed *= -1;
+                    sizeComponent.size /= 2;
+                    ECSManager.Instance.UpdateShapeSize(entity.id, sizeComponent.size);
+                    ComponentManager.Untag("escapingWall", entity);
+                }
+
+                if (sizeComponent.size < ECSManager.Instance.Config.minSize)
+                {
+                    ComponentManager.Untag("withCollision", entity);
+                    ComponentManager.Tag("withoutCollision", entity);
+                }
             }
 
             return new List<IComponent>{ posComponent, sizeComponent, velComponent };
