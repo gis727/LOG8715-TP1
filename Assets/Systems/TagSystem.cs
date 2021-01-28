@@ -6,22 +6,16 @@ public class TagSystem : ISystem
 {
     public void UpdateSystem()
     {
-        // Update des couleurs des composants dynamiques avec collisions
-        ComponentManager.ForEachElementWithTag("withCollision", new List<string> { }, (EntityComponent entity, List<IComponent> components) => {
-            ECSManager.Instance.UpdateShapeColor(entity.id, Color.blue);
-            return components;
-        });
+        ComponentManager.ForEachElementWithTag("dynamic", new List<string> { "Size" }, (EntityComponent entity, List<IComponent> components) => {
+            SizeComponent sizeComponent = (SizeComponent)components[0];
 
-        // Update des couleurs des composants dynamiques sans collisions
-        ComponentManager.ForEachElementWithTag("withoutCollision", new List<string> { }, (EntityComponent entity, List<IComponent> components) => {
-            ECSManager.Instance.UpdateShapeColor(entity.id, Color.green);
-            return components;
-        });
+            string untag = (sizeComponent.size < ECSManager.Instance.Config.minSize) ? "withCollision" : "withoutCollision";
+            string tag = (sizeComponent.size < ECSManager.Instance.Config.minSize) ? "withoutCollision" : "withCollision";
 
-        // Update des couleurs des composants statiques
-        ComponentManager.ForEachElementWithTag("static", new List<string> { }, (EntityComponent entity, List<IComponent> components) => {
-            ECSManager.Instance.UpdateShapeColor(entity.id, Color.red);
-            return components;
+            ComponentManager.Untag(untag, entity);
+            ComponentManager.Tag(tag, entity);
+
+            return new List<IComponent> { sizeComponent };
         });
     }
 

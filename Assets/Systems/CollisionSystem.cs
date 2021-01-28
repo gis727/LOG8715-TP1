@@ -38,12 +38,6 @@ public class CollisionSystem : ISystem
                     ECSManager.Instance.UpdateShapeSize(entity.id, sizeComponent.size);
                     ComponentManager.Untag("escapingWall", entity);
                 }
-
-                if (sizeComponent.size < ECSManager.Instance.Config.minSize)
-                {
-                    ComponentManager.Untag("withCollision", entity);
-                    ComponentManager.Tag("withoutCollision", entity);
-                }
             }
 
             return new List<IComponent>{ posComponent, sizeComponent, velComponent };
