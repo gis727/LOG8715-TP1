@@ -12,6 +12,10 @@ public class RegisterSystems
         toRegister.Add(new CollisionSystem());
         toRegister.Add(new PositionUpdateSystem());
         toRegister.Add(new TagSystem());
+        toRegister.Add(new ColoringSystem());
+        toRegister.Add(new SaveStateSystem());
+        toRegister.Add(new CoolDownSystem());
+        toRegister.Add(new RestoreStateSystem());
 
         return toRegister;
     }
