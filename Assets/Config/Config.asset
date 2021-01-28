@@ -46,4 +46,7 @@ MonoBehaviour:
     - CollisionSystem
     - SaveStateSystem
     - RestoreStateSystem
-    values: 010101010101
+    - ColoringSystem
+    - CoolDownSystem
+    - AcceleratorSystem
+    values: 010101010101010101

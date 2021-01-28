@@ -7,6 +7,8 @@ public static class ComponentManager
     public static Dictionary<string, Dictionary<uint, IComponent>> components = new Dictionary<string, Dictionary<uint, IComponent>>();
     public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
 
+    public static int counter = 0;
+
     public static bool ContainsEntities()
     {
         return components.ContainsKey("Position");
@@ -71,23 +73,44 @@ public static class ComponentManager
 
         foreach(EntityComponent entity in new HashSet<EntityComponent>(tags[tag]))
         {
-            // Get all required components
-            List<IComponent> reqComponents = new List<IComponent>();
-            foreach (string componentName in componentNames)
+            //peut on faire la verification ici ? (ou pas correct pour le paradigme)
+            if (EntityIsTagged("simulable", entity))
             {
-                reqComponents.Add(components[componentName][entity.id]);
-            }
+                // Get all required components
+                List<IComponent> reqComponents = new List<IComponent>();
+                foreach (string componentName in componentNames)
+                {
+                    reqComponents.Add(components[componentName][entity.id]);
+                }
 
-            // Execute lambda on components
-            List<IComponent> newComponents = lambda(entity, reqComponents);
+                // Execute lambda on components
+                List<IComponent> newComponents = lambda(entity, reqComponents);
 
-            //Update components
-            int index = 0;
-            foreach (string componentName in componentNames)
-            {
-                components[componentName][entity.id] = newComponents[index];
-                index++;
+                //Update components
+                int index = 0;
+                foreach (string componentName in componentNames)
+                {
+                    components[componentName][entity.id] = newComponents[index];
+                    index++;
+                }
+
             }
         }
     }
+
+    public static int GetCounterValue()
+    {
+        return counter;
+    }
+
+    public static void AddToCounter()
+    {
+        counter++;
+    }
+
+    public static void ResetCounter()
+    {
+        counter = 0;
+    }
+
 }
