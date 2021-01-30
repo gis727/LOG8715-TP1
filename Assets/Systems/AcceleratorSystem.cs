@@ -6,38 +6,34 @@ public class AcceleratorSystem : ISystem
 {
     public void UpdateSystem()
     {
-        // Recuperation des entites en vue de determiner si elles doivent etre simulees durant la frame
-        string tag = "simulable";
-        string conditionComponent = "Position";
         int iterationCounter = ComponentManager.GetCounterValue();
-
-        PositionComponent posComponent;
 
         if (iterationCounter < 4)
         {
             foreach (EntityComponent entity in ComponentManager.tags["shape"])
             {
-                posComponent = (PositionComponent)ComponentManager.components[conditionComponent][entity.id];
+                ComponentManager.Untag(ComponentManager.simulableTag, entity);
 
-                // retire le tag simulable
-                ComponentManager.Untag(tag, entity);
-
-                // si applicable ajoute le tag simulable
-                if (posComponent.position.y > 0)
-                {
-                    ComponentManager.Tag(tag, entity);
-                }
+                if (EntityIsSimulable(entity)) ComponentManager.Tag(ComponentManager.simulableTag, entity);
             }
+            
             ComponentManager.AddToCounter();
         }
         else
         {
             foreach (EntityComponent entity in ComponentManager.tags["shape"])
             {
-                ComponentManager.Tag(tag, entity);
+                ComponentManager.Tag(ComponentManager.simulableTag, entity);
             }
+            
             ComponentManager.ResetCounter();
         }
+    }
+
+    private bool EntityIsSimulable(EntityComponent entity)
+    {
+        PositionComponent posComponent = (PositionComponent)ComponentManager.components["Position"][entity.id];
+        return posComponent.position.y > 0;
     }
 
 

@@ -4,10 +4,8 @@ using UnityEngine;
 
 public static class ComponentManager
 {
+    #region ECS
     public static Dictionary<string, Dictionary<uint, IComponent>> components = new Dictionary<string, Dictionary<uint, IComponent>>();
-    public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
-
-    public static int counter = 0;
 
     public static bool ContainsEntities()
     {
@@ -48,6 +46,12 @@ public static class ComponentManager
         string componentName = System.ComponentModel.TypeDescriptor.GetClassName(typeof(ComponentType));
         if (components.ContainsKey(componentName)) components[componentName][entityId] = component;
     }
+    #endregion
+
+
+    #region TAG
+    public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
+    public static readonly string simulableTag = "simulable";
 
     public static void Tag(string tag, EntityComponent entity)
     {
@@ -73,8 +77,7 @@ public static class ComponentManager
 
         foreach(EntityComponent entity in new HashSet<EntityComponent>(tags[tag]))
         {
-            //peut on faire la verification ici ? (ou pas correct pour le paradigme)
-            if (EntityIsTagged("simulable", entity))
+            if (EntityIsTagged(simulableTag, entity))
             {
                 // Get all required components
                 List<IComponent> reqComponents = new List<IComponent>();
@@ -86,7 +89,7 @@ public static class ComponentManager
                 // Execute lambda on components
                 List<IComponent> newComponents = lambda(entity, reqComponents);
 
-                //Update components
+                // Update components
                 int index = 0;
                 foreach (string componentName in componentNames)
                 {
@@ -97,6 +100,11 @@ public static class ComponentManager
             }
         }
     }
+    #endregion
+
+
+    #region Extra frames counter
+    public static int counter = 0;
 
     public static int GetCounterValue()
     {
@@ -112,5 +120,5 @@ public static class ComponentManager
     {
         counter = 0;
     }
-
+    #endregion
 }

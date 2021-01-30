@@ -12,7 +12,7 @@ public class RestoreStateSystem : ISystem
         {
             foreach (EntityComponent entity in ComponentManager.tags["shape"])
             {
-                ComponentManager.Tag("simulable", entity);
+                ComponentManager.Tag(ComponentManager.simulableTag, entity);
             }
 
             ComponentManager.ForEachElementWithTag("dynamic", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
