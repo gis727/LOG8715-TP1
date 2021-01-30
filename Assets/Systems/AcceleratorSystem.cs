@@ -6,33 +6,33 @@ public class AcceleratorSystem : ISystem
 {
     public void UpdateSystem()
     {
-        int iterationCounter = ComponentManager.GetCounterValue();
+        int iterationCounter = World.GetCounterValue();
 
         if (iterationCounter < 4)
         {
-            foreach (EntityComponent entity in ComponentManager.tags[ComponentManager.defaultTag])
+            foreach (EntityComponent entity in World.tags[World.defaultTag])
             {
-                ComponentManager.Untag(ComponentManager.simulableTag, entity);
+                World.Untag(World.simulableTag, entity);
 
-                if (EntityIsSimulable(entity)) ComponentManager.Tag(ComponentManager.simulableTag, entity);
+                if (EntityIsSimulable(entity)) World.Tag(World.simulableTag, entity);
             }
             
-            ComponentManager.AddToCounter();
+            World.AddToCounter();
         }
         else
         {
-            foreach (EntityComponent entity in ComponentManager.tags[ComponentManager.defaultTag])
+            foreach (EntityComponent entity in World.tags[World.defaultTag])
             {
-                ComponentManager.Tag(ComponentManager.simulableTag, entity);
+                World.Tag(World.simulableTag, entity);
             }
             
-            ComponentManager.ResetCounter();
+            World.ResetCounter();
         }
     }
 
     private bool EntityIsSimulable(EntityComponent entity)
     {
-        PositionComponent posComponent = (PositionComponent)ComponentManager.components["Position"][entity.id];
+        PositionComponent posComponent = (PositionComponent)World.components["Position"][entity.id];
         return posComponent.position.y > 0;
     }
 

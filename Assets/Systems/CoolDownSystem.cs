@@ -7,7 +7,7 @@ public class CoolDownSystem : ISystem
     public void UpdateSystem()
     {
         
-        RestorationComponent component = (RestorationComponent)ComponentManager.GetSingletonComponent<RestorationComponent>();
+        RestorationComponent component = (RestorationComponent)World.GetSingletonComponent<RestorationComponent>();
 
         bool newCooldownDetected = component.coolDownStartTime == -1 && Input.GetKey(KeyCode.Space);
         bool cooldownInProgress = component.coolDownStartTime != -1;
@@ -40,7 +40,7 @@ public class CoolDownSystem : ISystem
             if (coolDownLapse >= coolDownLength) component.coolDownStartTime = -1;
         }
 
-        ComponentManager.SetSingletonComponent<RestorationComponent>(component);
+        World.SetSingletonComponent<RestorationComponent>(component);
     }
 
     public string Name

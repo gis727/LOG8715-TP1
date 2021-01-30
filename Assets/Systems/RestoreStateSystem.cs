@@ -6,16 +6,16 @@ public class RestoreStateSystem : ISystem
 {
     public void UpdateSystem()
     {
-        RestorationComponent component = (RestorationComponent)ComponentManager.GetSingletonComponent<RestorationComponent>();
+        RestorationComponent component = (RestorationComponent)World.GetSingletonComponent<RestorationComponent>();
 
         if (component.restorationRequired)
         {
-            foreach (EntityComponent entity in ComponentManager.tags[ComponentManager.defaultTag])
+            foreach (EntityComponent entity in World.tags[World.defaultTag])
             {
-                ComponentManager.Tag(ComponentManager.simulableTag, entity);
+                World.Tag(World.simulableTag, entity);
             }
 
-            ComponentManager.ForEachElementWithTag("dynamic", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
+            World.ForEachElementWithTag("dynamic", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
                 PositionComponent posComponent = (PositionComponent)components[0];
                 SizeComponent sizeComponent = (SizeComponent)components[1];
                 VelocityComponent velComponent = (VelocityComponent)components[2];

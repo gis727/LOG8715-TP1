@@ -6,7 +6,7 @@ public class InitializationSystem : ISystem
 {
     public void UpdateSystem()
     {
-        if (ComponentManager.ContainsEntities()) return;
+        if (World.ContainsEntities()) return;
 
         uint shapesCount = (uint) ECSManager.Instance.Config.allShapesToSpawn.Count;
         uint index = 0;
@@ -15,12 +15,12 @@ public class InitializationSystem : ISystem
         foreach (Config.ShapeConfig config in ECSManager.Instance.Config.allShapesToSpawn)
         {
             EntityComponent entity = new EntityComponent();
-            entity.id = ComponentManager.AddEntity(config.initialPos, config.initialSpeed, config.size);
+            entity.id = World.AddEntity(config.initialPos, config.initialSpeed, config.size);
 
             string movementTag = (index < maxStaticIndex) ? "static" : "dynamic";
-            ComponentManager.Tag(movementTag, entity);
-            ComponentManager.Tag("withCollision", entity);
-            ComponentManager.Tag(ComponentManager.defaultTag, entity);
+            World.Tag(movementTag, entity);
+            World.Tag("withCollision", entity);
+            World.Tag(World.defaultTag, entity);
 
             ECSManager.Instance.CreateShape(entity.id, config);
             index++;

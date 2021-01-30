@@ -9,7 +9,7 @@ public class CollisionSystem : ISystem
         // Obtention et sauvegarde des positions et des tailles
         List<Vector2> positions = new List<Vector2>();
         List<float> sizes = new List<float>();
-        ComponentManager.ForEachElementWithTag("withCollision", new List<string> { "Position", "Size" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag("withCollision", new List<string> { "Position", "Size" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
 
@@ -19,16 +19,16 @@ public class CollisionSystem : ISystem
         });
 
         // Detection des collisions entre entites
-        ComponentManager.ForEachElementWithTag("withCollision", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag("withCollision", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
             VelocityComponent velComponent = (VelocityComponent)components[2];
 
-            bool entityIsStatic = ComponentManager.EntityIsTagged("static", entity);
+            bool entityIsStatic = World.EntityIsTagged("static", entity);
 
             if (!entityIsStatic) // Les entitees statiques ne reagissent pas aux collisions
             {
-                bool entityIsEscapingWall = ComponentManager.EntityIsTagged("escapingWall", entity);
+                bool entityIsEscapingWall = World.EntityIsTagged("escapingWall", entity);
                 bool collisionDetected = CollisionDetected(positions, posComponent.position, sizes, sizeComponent.size);
 
                 if (!entityIsEscapingWall && collisionDetected)
@@ -36,7 +36,7 @@ public class CollisionSystem : ISystem
                     velComponent.speed *= -1;
                     sizeComponent.size /= 2;
                     ECSManager.Instance.UpdateShapeSize(entity.id, sizeComponent.size);
-                    ComponentManager.Untag("escapingWall", entity);
+                    World.Untag("escapingWall", entity);
                 }
             }
 
@@ -44,21 +44,21 @@ public class CollisionSystem : ISystem
         });
 
         // Detection des collisions avec l'ecran
-        ComponentManager.ForEachElementWithTag("dynamic", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag("dynamic", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
             VelocityComponent velComponent = (VelocityComponent)components[2];
-            bool entityIsEscapingWall = ComponentManager.EntityIsTagged("escapingWall", entity);
+            bool entityIsEscapingWall = World.EntityIsTagged("escapingWall", entity);
             bool collisionDetected = ScreenCollisionDetected(posComponent.position, sizeComponent.size);
 
             if (entityIsEscapingWall && !collisionDetected)
             {
-                ComponentManager.Untag("escapingWall", entity);
+                World.Untag("escapingWall", entity);
                 RestoreEntity(ref sizeComponent, entity);
             }
             else if (!entityIsEscapingWall && collisionDetected)
             {
-                ComponentManager.Tag("escapingWall", entity);
+                World.Tag("escapingWall", entity);
                 velComponent.speed *= -1;
                 RestoreEntity(ref sizeComponent, entity);
             }
@@ -72,8 +72,8 @@ public class CollisionSystem : ISystem
     private void RestoreEntity(ref SizeComponent sizeComponent, EntityComponent entity)
     {
         sizeComponent.size = sizeComponent.defaultSize;
-        ComponentManager.Tag("withCollision", entity);
-        ComponentManager.Untag("withoutCollision", entity);
+        World.Tag("withCollision", entity);
+        World.Untag("withoutCollision", entity);
     }
 
     private bool CollisionDetected(List<Vector2> positions, Vector2 targetPosition, List<float> sizes, float targetSize)

@@ -6,7 +6,7 @@ public class SaveStateSystem : ISystem
 {
     public void UpdateSystem()
     {
-        ComponentManager.ForEachElementWithTag("dynamic", new List<string> { "Velocity", "Position", "Size" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag("dynamic", new List<string> { "Velocity", "Position", "Size" }, (EntityComponent entity, List<IComponent> components) => {
             VelocityComponent velComponent = (VelocityComponent)components[0];
             PositionComponent posComponent = (PositionComponent)components[1];
             SizeComponent sizeComponent    = (SizeComponent)components[2];

@@ -7,7 +7,7 @@ public class PositionUpdateSystem : ISystem
     public void UpdateSystem()
     {
         // Update des composants dynamiques
-        ComponentManager.ForEachElementWithTag("dynamic", new List<string>{ "Velocity", "Position" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag("dynamic", new List<string>{ "Velocity", "Position" }, (EntityComponent entity, List<IComponent> components) => {
             VelocityComponent velComponent = (VelocityComponent)components[0];
             PositionComponent posComponent = (PositionComponent)components[1];
 
@@ -18,7 +18,7 @@ public class PositionUpdateSystem : ISystem
         });
 
         // Update des composants statiques
-        ComponentManager.ForEachElementWithTag("static", new List<string> { "Position" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag("static", new List<string> { "Position" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
 
             ECSManager.Instance.UpdateShapePosition(entity.id, posComponent.position);
