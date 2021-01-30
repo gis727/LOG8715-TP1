@@ -6,7 +6,6 @@ public class AcceleratorSystem : ISystem
 {
     public void UpdateSystem()
     {
-
         // Recuperation des entites en vue de determiner si elles doivent etre simulees durant la frame
         string tag = "simulable";
         string conditionComponent = "Position";
