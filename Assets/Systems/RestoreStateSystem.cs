@@ -10,6 +10,11 @@ public class RestoreStateSystem : ISystem
 
         if (component.restorationRequired)
         {
+            foreach (EntityComponent entity in ComponentManager.tags[ComponentManager.defaultTag])
+            {
+                ComponentManager.Tag(ComponentManager.simulableTag, entity);
+            }
+
             ComponentManager.ForEachElementWithTag("dynamic", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
                 PositionComponent posComponent = (PositionComponent)components[0];
                 SizeComponent sizeComponent = (SizeComponent)components[1];

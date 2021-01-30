@@ -4,8 +4,8 @@ using UnityEngine;
 
 public static class ComponentManager
 {
+    #region ECS
     public static Dictionary<string, Dictionary<uint, IComponent>> components = new Dictionary<string, Dictionary<uint, IComponent>>();
-    public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
 
     public static bool ContainsEntities()
     {
@@ -46,6 +46,13 @@ public static class ComponentManager
         string componentName = System.ComponentModel.TypeDescriptor.GetClassName(typeof(ComponentType));
         if (components.ContainsKey(componentName)) components[componentName][entityId] = component;
     }
+    #endregion
+
+
+    #region TAG
+    public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
+    public static readonly string simulableTag = "simulable";
+    public static readonly string defaultTag = "shape";
 
     public static void Tag(string tag, EntityComponent entity)
     {
@@ -67,27 +74,53 @@ public static class ComponentManager
 
     public static void ForEachElementWithTag(string tag, List<string> componentNames, System.Func<EntityComponent, List<IComponent>, List<IComponent>> lambda)
     {
+        if (tag.Length == 0) tag = defaultTag;
         if (!tags.ContainsKey(tag)) return;
 
         foreach(EntityComponent entity in new HashSet<EntityComponent>(tags[tag]))
         {
-            // Get all required components
-            List<IComponent> reqComponents = new List<IComponent>();
-            foreach (string componentName in componentNames)
+            if (EntityIsTagged(simulableTag, entity))
             {
-                reqComponents.Add(components[componentName][entity.id]);
-            }
+                // Get all required components
+                List<IComponent> reqComponents = new List<IComponent>();
+                foreach (string componentName in componentNames)
+                {
+                    reqComponents.Add(components[componentName][entity.id]);
+                }
 
-            // Execute lambda on components
-            List<IComponent> newComponents = lambda(entity, reqComponents);
+                // Execute lambda on components
+                List<IComponent> newComponents = lambda(entity, reqComponents);
 
-            //Update components
-            int index = 0;
-            foreach (string componentName in componentNames)
-            {
-                components[componentName][entity.id] = newComponents[index];
-                index++;
+                // Update components
+                int index = 0;
+                foreach (string componentName in componentNames)
+                {
+                    components[componentName][entity.id] = newComponents[index];
+                    index++;
+                }
+
             }
         }
     }
+    #endregion
+
+
+    #region Extra frames counter
+    public static int counter = 0;
+
+    public static int GetCounterValue()
+    {
+        return counter;
+    }
+
+    public static void AddToCounter()
+    {
+        counter++;
+    }
+
+    public static void ResetCounter()
+    {
+        counter = 0;
+    }
+    #endregion
 }
