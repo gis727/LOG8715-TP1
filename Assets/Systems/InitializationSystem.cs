@@ -20,7 +20,7 @@ public class InitializationSystem : ISystem
             string movementTag = (index < maxStaticIndex) ? "static" : "dynamic";
             ComponentManager.Tag(movementTag, entity);
             ComponentManager.Tag("withCollision", entity);
-            ComponentManager.Tag("shape", entity);
+            ComponentManager.Tag(ComponentManager.defaultTag, entity);
 
             ECSManager.Instance.CreateShape(entity.id, config);
             index++;

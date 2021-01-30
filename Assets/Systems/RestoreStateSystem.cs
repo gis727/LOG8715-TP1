@@ -10,7 +10,7 @@ public class RestoreStateSystem : ISystem
 
         if (component.restorationRequired)
         {
-            foreach (EntityComponent entity in ComponentManager.tags["shape"])
+            foreach (EntityComponent entity in ComponentManager.tags[ComponentManager.defaultTag])
             {
                 ComponentManager.Tag(ComponentManager.simulableTag, entity);
             }

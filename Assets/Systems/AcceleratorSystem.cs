@@ -10,7 +10,7 @@ public class AcceleratorSystem : ISystem
 
         if (iterationCounter < 4)
         {
-            foreach (EntityComponent entity in ComponentManager.tags["shape"])
+            foreach (EntityComponent entity in ComponentManager.tags[ComponentManager.defaultTag])
             {
                 ComponentManager.Untag(ComponentManager.simulableTag, entity);
 
@@ -21,7 +21,7 @@ public class AcceleratorSystem : ISystem
         }
         else
         {
-            foreach (EntityComponent entity in ComponentManager.tags["shape"])
+            foreach (EntityComponent entity in ComponentManager.tags[ComponentManager.defaultTag])
             {
                 ComponentManager.Tag(ComponentManager.simulableTag, entity);
             }

@@ -52,6 +52,7 @@ public static class ComponentManager
     #region TAG
     public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
     public static readonly string simulableTag = "simulable";
+    public static readonly string defaultTag = "shape";
 
     public static void Tag(string tag, EntityComponent entity)
     {
@@ -73,6 +74,7 @@ public static class ComponentManager
 
     public static void ForEachElementWithTag(string tag, List<string> componentNames, System.Func<EntityComponent, List<IComponent>, List<IComponent>> lambda)
     {
+        if (tag.Length == 0) tag = defaultTag;
         if (!tags.ContainsKey(tag)) return;
 
         foreach(EntityComponent entity in new HashSet<EntityComponent>(tags[tag]))
