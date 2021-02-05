@@ -104,23 +104,4 @@ public static class World
     }
     #endregion
 
-
-    #region Extra frames counter
-    public static int counter = 0;
-
-    public static int GetCounterValue()
-    {
-        return counter;
-    }
-
-    public static void AddToCounter()
-    {
-        counter++;
-    }
-
-    public static void ResetCounter()
-    {
-        counter = 0;
-    }
-    #endregion
 }
