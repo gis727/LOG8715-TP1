@@ -6,9 +6,9 @@ public class AcceleratorSystem : ISystem
 {
     public void UpdateSystem()
     {
-        int iterationCounter = World.GetCounterValue();
+        FramesCounterComponent counterComponent = (FramesCounterComponent)World.GetSingletonComponent<FramesCounterComponent>();
 
-        if (iterationCounter < 4)
+        if (counterComponent.GetCounterValue() < 4)
         {
             foreach (EntityComponent entity in World.tags[World.defaultTag])
             {
@@ -16,8 +16,8 @@ public class AcceleratorSystem : ISystem
 
                 if (EntityIsSimulable(entity)) World.Tag(World.simulableTag, entity);
             }
-            
-            World.AddToCounter();
+
+            counterComponent.AddToCounter();
         }
         else
         {
@@ -25,8 +25,8 @@ public class AcceleratorSystem : ISystem
             {
                 World.Tag(World.simulableTag, entity);
             }
-            
-            World.ResetCounter();
+
+            counterComponent.ResetCounter();
         }
     }
 
