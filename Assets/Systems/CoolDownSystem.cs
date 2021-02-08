@@ -21,7 +21,7 @@ public class CoolDownSystem : ISystem
         if (Input.GetKey(KeyCode.Space) && cooldownInProgress)
         {
             float coolDownLapse = Time.time - component.coolDownStartTime;
-            Debug.Log("Cooldown In progress. " + coolDownLapse.ToString("F3") + " seconds left.");
+            Debug.Log("Cooldown in progress for " + coolDownLapse.ToString("F3") + " seconds.");
         }
     }
 
