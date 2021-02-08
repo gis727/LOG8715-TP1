@@ -15,7 +15,7 @@ public class RestoreStateSystem : ISystem
                 World.Tag(World.simulableTag, entity);
             }
 
-            World.ForEachElementWithTag(new List<string> { World.simulableTag, "dynamic" }, new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
+            World.ForEachElementWithTag(new List<string> { World.simulableTag, World.dynamicTag }, new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
                 PositionComponent posComponent = (PositionComponent)components[0];
                 SizeComponent sizeComponent = (SizeComponent)components[1];
                 VelocityComponent velComponent = (VelocityComponent)components[2];

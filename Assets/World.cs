@@ -52,8 +52,16 @@ public static class World
 
     #region TAG
     public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
+
+    #region Tags definitions
     public static readonly string simulableTag = "simulable";
     public static readonly string defaultTag = "shape";
+    public static readonly string withCollisionTag = "withCollision";
+    public static readonly string withoutCollisionTag = "withoutCollision";
+    public static readonly string dynamicTag = "dynamic";
+    public static readonly string staticTag = "static";
+    public static readonly string escapingWallTag = "escapingWall";
+    #endregion
 
     public static void Tag(string tag, EntityComponent entity)
     {
