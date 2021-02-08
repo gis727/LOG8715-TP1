@@ -100,26 +100,22 @@ public static class World
 
         foreach(EntityComponent entity in GetAllEntitiesWithTags(targetTags))
         {
-            if (EntityIsTagged(simulableTag, entity))
+            // Get all required components
+            List<IComponent> reqComponents = new List<IComponent>();
+            foreach (string componentName in componentNames)
             {
-                // Get all required components
-                List<IComponent> reqComponents = new List<IComponent>();
-                foreach (string componentName in componentNames)
-                {
-                    reqComponents.Add(components[componentName][entity.id]);
-                }
+                reqComponents.Add(components[componentName][entity.id]);
+            }
 
-                // Execute lambda on components
-                List<IComponent> newComponents = lambda(entity, reqComponents);
+            // Execute lambda on components
+            List<IComponent> newComponents = lambda(entity, reqComponents);
 
-                // Update components
-                int index = 0;
-                foreach (string componentName in componentNames)
-                {
-                    components[componentName][entity.id] = newComponents[index];
-                    index++;
-                }
-
+            // Update components
+            int index = 0;
+            foreach (string componentName in componentNames)
+            {
+                components[componentName][entity.id] = newComponents[index];
+                index++;
             }
         }
     }
