@@ -10,7 +10,6 @@ public class RegisterSystems
         // AJOUTEZ VOS SYSTEMS ICI
         toRegister.Add(new InitializationSystem());
 
-        AcceleratorSystem acceleratorSystem       = new AcceleratorSystem();
         CollisionSystem collisionSystem           = new CollisionSystem();
         PositionUpdateSystem positionUpdateSystem = new PositionUpdateSystem();
         TagSystem tagSystem                       = new TagSystem();
@@ -21,10 +20,9 @@ public class RegisterSystems
 
         for (uint i = 0; i < 5; i++)
         {
-            toRegister.Add(acceleratorSystem);
+            toRegister.Add(tagSystem);
             toRegister.Add(collisionSystem);
             toRegister.Add(positionUpdateSystem);
-            toRegister.Add(tagSystem);
             toRegister.Add(coloringSystem);
             toRegister.Add(saveStateSystem);
             toRegister.Add(coolDownSystem);
