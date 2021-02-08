@@ -8,11 +8,13 @@ public static class World
     #region ECS
     public static Dictionary<string, Dictionary<uint, IComponent>> components = new Dictionary<string, Dictionary<uint, IComponent>>();
 
+    // Retourne "True" si le World contient au moins une entité
     public static bool ContainsEntities()
     {
         return components.ContainsKey("Position");
     }
 
+    // Ajoute une entité dans le World
     public static uint AddEntity(Vector2 pos, Vector2 speed, float size)
     {
         if (!components.ContainsKey("Position")) components.Add("Position", new Dictionary<uint, IComponent>());
@@ -28,6 +30,8 @@ public static class World
         return entityId;
     }
 
+    // Retourne un component-singleton pour le type passé en paramètre
+    // Si le component n'existe pas, il est créé
     public static IComponent GetSingletonComponent<ComponentType>() where ComponentType : IComponent, new()
     {
         uint entityId = uint.MaxValue; // Entitee unique associee au singleton
@@ -41,6 +45,8 @@ public static class World
 
         return components[componentName][entityId];
     }
+
+    // Déclare un nouveau component-singleton pour le type du component passé en paramètre
     public static void SetSingletonComponent<ComponentType>(IComponent component)
     {
         uint entityId = uint.MaxValue;
@@ -54,8 +60,11 @@ public static class World
     public static Dictionary<string, HashSet<EntityComponent>> tags = new Dictionary<string, HashSet<EntityComponent>>();
 
     #region Tags definitions
-    public static readonly string simulableTag = "simulable";
+
+    // Tag par défaut présent sur toutes les entités
     public static readonly string defaultTag = "shape";
+
+    public static readonly string simulableTag = "simulable";
     public static readonly string withCollisionTag = "withCollision";
     public static readonly string withoutCollisionTag = "withoutCollision";
     public static readonly string dynamicTag = "dynamic";
@@ -63,25 +72,28 @@ public static class World
     public static readonly string escapingWallTag = "escapingWall";
     #endregion
 
+    // Tag une entité
     public static void Tag(string tag, EntityComponent entity)
     {
         if (!tags.ContainsKey(tag)) tags.Add(tag, new HashSet<EntityComponent>());
         tags[tag].Add(entity);
     }
 
+    // Retire le tag d'une entité
     public static void Untag(string tag, EntityComponent entity)
     {
         if (!tags.ContainsKey(tag)) return;
         tags[tag].Remove(entity);
     }
 
+    // Retourne "True" si l'entité en paramètre est taggée avec le tag en paramètre
     public static bool EntityIsTagged(string tag, EntityComponent entity)
     {
         if (!tags.ContainsKey(tag)) return false;
         return tags[tag].Contains(entity);
     }
 
-    // Retourne toutes les entitées marquées avec tous les tags de "targetTags"
+    // Retourne toutes les entités marquées avec tous les tags passés en paramètre (chaque entité doit avoir tous les tags)
     private static List<EntityComponent> GetAllEntitiesWithTags(List<string> targetTags)
     {
         HashSet<EntityComponent> entities = new HashSet<EntityComponent>(tags[targetTags[0]]);
@@ -93,6 +105,7 @@ public static class World
         return entities.ToList();
     }
 
+    // Exécute un lambda sur chaque entité ayant tous les tags en paramètre
     public static void ForEachElementWithTag(List<string> targetTags, List<string> componentNames, System.Func<EntityComponent, List<IComponent>, List<IComponent>> lambda)
     {
         if (targetTags.Count == 0) targetTags = new List<string> {defaultTag};
@@ -100,17 +113,17 @@ public static class World
 
         foreach(EntityComponent entity in GetAllEntitiesWithTags(targetTags))
         {
-            // Get all required components
+            // Obtention de tous les components nécessaires
             List<IComponent> reqComponents = new List<IComponent>();
             foreach (string componentName in componentNames)
             {
                 reqComponents.Add(components[componentName][entity.id]);
             }
 
-            // Execute lambda on components
+            // Exécution du lambda sur tous les components
             List<IComponent> newComponents = lambda(entity, reqComponents);
 
-            // Update components
+            // Mise à jour des components
             int index = 0;
             foreach (string componentName in componentNames)
             {
@@ -120,11 +133,10 @@ public static class World
         }
     }
 
-
+    // Exécute un lambda sur toutes les entités du World
     public static void ForAllElements(System.Func<EntityComponent, List<IComponent>, List<IComponent>> lambda)
     {
         ForEachElementWithTag(new List<string> {}, new List<string> {}, lambda);
     }
     #endregion
-
 }

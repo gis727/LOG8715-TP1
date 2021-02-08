@@ -10,6 +10,7 @@ public class TagSystem : ISystem
         UpdateSimulableTag();
     }
 
+    // Met à jour les tags de collisions
     private void UpdateCollisionTags()
     {
         World.ForEachElementWithTag(new List<string> { World.simulableTag, World.dynamicTag }, new List<string> { "Size" }, (EntityComponent entity, List<IComponent> components) => {
@@ -25,6 +26,7 @@ public class TagSystem : ISystem
         });
     }
 
+    // Tag les entités qui doivent etre simulées en fonction de l'itération de simulation
     private void UpdateSimulableTag()
     {
         FramesCounterComponent counterComponent = (FramesCounterComponent)World.GetSingletonComponent<FramesCounterComponent>();

@@ -6,7 +6,6 @@ public class CoolDownSystem : ISystem
 {
     public void UpdateSystem()
     {
-        
         RestorationComponent component = (RestorationComponent)World.GetSingletonComponent<RestorationComponent>();
 
         bool newCooldownDetected = component.coolDownStartTime == -1 && Input.GetKey(KeyCode.Space);
@@ -16,6 +15,7 @@ public class CoolDownSystem : ISystem
         ShowCoolDownState(component, cooldownInProgress);
     }
 
+    // Affiche l'état du cooldown si la touche correspondante est appuyée
     private void ShowCoolDownState(RestorationComponent component, bool cooldownInProgress)
     {
         if (Input.GetKey(KeyCode.Space) && cooldownInProgress)
@@ -40,6 +40,7 @@ public class CoolDownSystem : ISystem
             if (coolDownLapse >= coolDownLength) component.coolDownStartTime = -1;
         }
 
+        // Mise à jour du compteur dans le singleton
         World.SetSingletonComponent<RestorationComponent>(component);
     }
 

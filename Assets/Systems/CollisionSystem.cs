@@ -18,7 +18,7 @@ public class CollisionSystem : ISystem
             return components;
         });
 
-        // Detection des collisions entre entites
+        // Detection des collisions entre entités
         World.ForEachElementWithTag(new List<string> { World.simulableTag, World.withCollisionTag }, new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
@@ -26,7 +26,7 @@ public class CollisionSystem : ISystem
 
             bool entityIsStatic = World.EntityIsTagged(World.staticTag, entity);
 
-            if (!entityIsStatic) // Les entitees statiques ne reagissent pas aux collisions
+            if (!entityIsStatic) // Les entités statiques ne réagissent pas aux collisions
             {
                 bool entityIsEscapingWall = World.EntityIsTagged(World.escapingWallTag, entity);
                 bool collisionDetected = CollisionDetected(positions, posComponent.position, sizes, sizeComponent.size);
@@ -43,7 +43,7 @@ public class CollisionSystem : ISystem
             return new List<IComponent>{ posComponent, sizeComponent, velComponent };
         });
 
-        // Detection des collisions avec l'ecran
+        // Détection des collisions avec l'écran
         World.ForEachElementWithTag(new List<string> { World.simulableTag, World.dynamicTag }, new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
@@ -69,6 +69,7 @@ public class CollisionSystem : ISystem
 
     }
 
+    // Remet le tag de collision sur une entité
     private void RestoreEntity(ref SizeComponent sizeComponent, EntityComponent entity)
     {
         sizeComponent.size = sizeComponent.defaultSize;
@@ -76,6 +77,7 @@ public class CollisionSystem : ISystem
         World.Untag(World.withoutCollisionTag, entity);
     }
 
+    // Retourne "True" si une collision est détectée entre toutes les entiés (positions + sizes) et l'entité visée (targetPosition + targetSize)
     private bool CollisionDetected(List<Vector2> positions, Vector2 targetPosition, List<float> sizes, float targetSize)
     {
         int index = 0;
@@ -91,6 +93,7 @@ public class CollisionSystem : ISystem
         return false;
     }
 
+    // Retourne "True" si une collision est détectée entre l'entité visée et l'un des bords de l'écran
     private bool ScreenCollisionDetected(Vector2 pos, float targetSize)
     {
         Vector2 upperScreenLimits = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
