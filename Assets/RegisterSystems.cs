@@ -9,13 +9,13 @@ public class RegisterSystems
 
         // AJOUTEZ VOS SYSTEMS ICI
         toRegister.Add(new InitializationSystem());
+        toRegister.Add(new CoolDownSystem());
 
         CollisionSystem collisionSystem           = new CollisionSystem();
         PositionUpdateSystem positionUpdateSystem = new PositionUpdateSystem();
         TagSystem tagSystem                       = new TagSystem();
         ColoringSystem coloringSystem             = new ColoringSystem();
         SaveStateSystem saveStateSystem           = new SaveStateSystem();
-        CoolDownSystem coolDownSystem             = new CoolDownSystem();
         RestoreStateSystem restoreStateSystem     = new RestoreStateSystem();
 
         for (uint i = 0; i < 5; i++)
@@ -25,7 +25,6 @@ public class RegisterSystems
             toRegister.Add(positionUpdateSystem);
             toRegister.Add(coloringSystem);
             toRegister.Add(saveStateSystem);
-            toRegister.Add(coolDownSystem);
             toRegister.Add(restoreStateSystem);
         }
         return toRegister;
