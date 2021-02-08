@@ -9,7 +9,7 @@ public class CollisionSystem : ISystem
         // Obtention et sauvegarde des positions et des tailles
         List<Vector2> positions = new List<Vector2>();
         List<float> sizes = new List<float>();
-        World.ForEachElementWithTag("withCollision", new List<string> { "Position", "Size" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag(new List<string> { World.simulableTag, "withCollision" }, new List<string> { "Position", "Size" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
 
@@ -19,7 +19,7 @@ public class CollisionSystem : ISystem
         });
 
         // Detection des collisions entre entites
-        World.ForEachElementWithTag("withCollision", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag(new List<string> { World.simulableTag, "withCollision" }, new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
             VelocityComponent velComponent = (VelocityComponent)components[2];
@@ -44,7 +44,7 @@ public class CollisionSystem : ISystem
         });
 
         // Detection des collisions avec l'ecran
-        World.ForEachElementWithTag("dynamic", new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
+        World.ForEachElementWithTag(new List<string> { World.simulableTag, "dynamic" }, new List<string> { "Position", "Size", "Velocity" }, (EntityComponent entity, List<IComponent> components) => {
             PositionComponent posComponent = (PositionComponent)components[0];
             SizeComponent sizeComponent = (SizeComponent)components[1];
             VelocityComponent velComponent = (VelocityComponent)components[2];

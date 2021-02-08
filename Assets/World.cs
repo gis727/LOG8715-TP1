@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public static class World
 {
@@ -72,12 +73,24 @@ public static class World
         return tags[tag].Contains(entity);
     }
 
-    public static void ForEachElementWithTag(string tag, List<string> componentNames, System.Func<EntityComponent, List<IComponent>, List<IComponent>> lambda)
+    // Retourne toutes les entitées marquées avec tous les tags de "targetTags"
+    private static List<EntityComponent> GetAllEntitiesWithTags(List<string> targetTags)
     {
-        if (tag.Length == 0) tag = defaultTag;
-        if (!tags.ContainsKey(tag)) return;
+        HashSet<EntityComponent> entities = new HashSet<EntityComponent>(tags[targetTags[0]]);
 
-        foreach(EntityComponent entity in new HashSet<EntityComponent>(tags[tag]))
+        foreach(string tag in targetTags)
+        {
+            entities = new HashSet<EntityComponent>(entities.Intersect(tags[tag]));
+        }
+        return entities.ToList();
+    }
+
+    public static void ForEachElementWithTag(List<string> targetTags, List<string> componentNames, System.Func<EntityComponent, List<IComponent>, List<IComponent>> lambda)
+    {
+        if (targetTags.Count == 0) targetTags = new List<string> {defaultTag};
+        foreach(string tag in targetTags) if (!tags.ContainsKey(tag)) return;
+
+        foreach(EntityComponent entity in GetAllEntitiesWithTags(targetTags))
         {
             if (EntityIsTagged(simulableTag, entity))
             {
