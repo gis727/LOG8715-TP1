@@ -119,6 +119,12 @@ public static class World
             }
         }
     }
+
+
+    public static void ForAllElements(System.Func<EntityComponent, List<IComponent>, List<IComponent>> lambda)
+    {
+        ForEachElementWithTag(new List<string> {}, new List<string> {}, lambda);
+    }
     #endregion
 
 }
