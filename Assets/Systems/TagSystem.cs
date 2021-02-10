@@ -29,7 +29,7 @@ public class TagSystem : ISystem
     // Tag les entités qui doivent etre simulées en fonction de l'itération de simulation
     private void UpdateSimulableTag()
     {
-        FramesCounterComponent counterComponent = (FramesCounterComponent)World.GetSingletonComponent<FramesCounterComponent>();
+        CyclesCounterComponent counterComponent = (CyclesCounterComponent)World.GetSingletonComponent<CyclesCounterComponent>();
 
         if (counterComponent.GetCounterValue() < 4)
         {

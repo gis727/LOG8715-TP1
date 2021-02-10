@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FramesCounterComponent : IComponent
+public class CyclesCounterComponent : IComponent
 {
-    public FramesCounterComponent()
+    public CyclesCounterComponent()
     {
         this.counter = 0;
     }
